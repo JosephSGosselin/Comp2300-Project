@@ -78,7 +78,20 @@ def addContact(password):
 
 
     data = {"name":contactName,"email":contactEmail}
-    jsonLoaded["user"][0]["Contacts"].append(data)
+    Contacts = jsonLoaded["user"][0]["Contacts"]
+    if Contacts == []:
+        Contacts.append(data)
+        print ("Contact added.\n")
+    elif contactEmail in [x["email"] for x in Contacts]:
+        count = 0
+        for x in range(0,len(Contacts)):
+            if Contacts[x]["email"] == contactEmail:
+                count = x
+        Contacts[x]["name"] = contactName
+        print ("Contact updated.\n")
+    else:
+        Contacts.append(data)
+        print ("Contact added.\n")
     myFile.seek(0)
     json.dump(jsonLoaded,myFile, indent=4)
     myFile.close()

@@ -1,20 +1,5 @@
 {
     "user": [
-        {
-            "name": "j",
-            "email": "j",
-            "password": "$2a$12$Z3fjJvmuOvCjIJAw6YDOKeAp6/l7yEIBF8GfHjPv6J41dUlgXHtXa",
-            "Contacts": 
-            [
-                {
-                    "name": "k",
-                    "email": "k"
-                },
-                {
-                    "name": "l",
-                    "email": "l"
-                }
-            ]
-        }
+
     ]
 }
