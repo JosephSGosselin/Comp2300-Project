@@ -62,7 +62,7 @@ def addUser():
         print ("Exiting SecureDrop\n")
 
     else:
-        data = {"name":fullName,"email": emailData, "password": generateHash(passwordData).decode(),"Contacts":[] }
+        data = {"name":fullName,"email": emailData, "password": generateHash(passwordData).decode() test,"Contacts":[] }
         jsonLoaded["user"].append(data)
         myFile.seek(0)
         json.dump(jsonLoaded,myFile, indent=4)
