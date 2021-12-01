@@ -1,5 +1,10 @@
 {
     "user": [
-
+        {
+            "name": "j",
+            "email": "j",
+            "password": "$2a$12$5SRQTnn5PlXTj5jLf4rSAOcMxcc0p6Gq5T5a44VMeeuTozwvIMpqa",
+            "salt": "QF8lWLjKgecbk1btvJ4FNvYHnJ4gMMvZ"
+        }
     ]
 }
