@@ -1,5 +1,10 @@
 import json
+import multiprocessing
+from User import User
+from udpServices import *
 from utils import *
+import string
+
 
 def main():
 
@@ -43,8 +48,22 @@ def login():
 def runShell(password):
 
     #when user account is made, it is taking the info from json file.
-    user = User()
+    user = User(password)
+    sendProcess = multiprocessing.Process(target=sendUDP, args=(user.email,))
 
+    #getProcess = multiprocessing.Process(target=getUDP, args=(user,)
+    #starts thread. Dont need to join then since they are just receiving and sending udp packets
+    sendProcess.start()
+   
+
+    #giving the object of user, the process typically wont modify user
+    #but with q, it is shareable memory, so i push data in the getUDP Func
+    #and push it onto q, which i can then obtain the data with q.get()
+    #allows me to pass pickable objects to shared memory
+    q = multiprocessing.Queue()
+
+
+   
     shouldRun = True
     encryptionKey = generateEncrpytionHash(password, user.salt)
     print ("Welcome to SecureDrop")
@@ -59,16 +78,28 @@ def runShell(password):
             decryptContacts(encryptionKey)
             addContact()
             encryptContacts(encryptionKey)
+            user.generateContactList(password)
         elif (userResponse == "send"):
             print("sending")
         elif(userResponse == "list"):
-            print("listing")
+            print("Pinging Contacts...")
+            getProcess = multiprocessing.Process(target=getUDP, args=(user,q))
+            getProcess.start()
+            #updates whole user object from getProcess
+            user = q.get()
+            user.generateContactList(password)
+            getProcess.kill()
+            print()
+  
         elif(userResponse == "exit"):
             del password
             del encryptionKey
+            sendProcess.kill()
             exit()
         else:
             print("Unknown Command")
+
+    
 
 def listCommands():
     print ("\"add\"  -> Add a new contact")
@@ -78,4 +109,7 @@ def listCommands():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        pass

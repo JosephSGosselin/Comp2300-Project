@@ -101,19 +101,28 @@ def addContact():
     Contacts = jsonLoaded["contacts"]
 
     #updates contacts if needed
-    if Contacts == []:
+    shouldAppend = True
+    for contact in Contacts:
+        if str(contact["email"]).__eq__(contactEmail):
+            contact["name"] = contactName
+            print("Contact Updated\n")
+            shouldAppend = False
+    if shouldAppend:
         Contacts.append(data)
-        print ("Contact added.\n")
-    elif contactEmail in [x["email"] for x in Contacts]:
-        count = 0
-        for x in range(0,len(Contacts)):
-            if Contacts[x]["email"] == contactEmail:
-                count = x
-        Contacts[x]["name"] = contactName
-        print ("Contact updated.\n")
-    else:
-        Contacts.append(data)
-        print ("Contact added.\n")
+    # if Contacts == []:
+    #     Contacts.append(data)
+    #     print ("Contact added.\n")
+    # elif contactEmail in [x["email"] for x in Contacts]:
+    #     count = 0
+    #     for x in range(0,len(Contacts)):
+    #         if Contacts[x]["email"] == contactEmail:
+    #             count = x
+    #     Contacts[x]["name"] = contactName
+    #     print(Contacts[x]["name"])
+    #     print ("Contact updated.\n")
+    # else:
+    #     Contacts.append(data)
+    #     print ("Contact added.\n")
 
     myFile.seek(0)
     json.dump(jsonLoaded,myFile, indent=4)
@@ -167,7 +176,7 @@ def decryptContacts (key):
         data = cipher.decrypt_and_verify(ciphertext, tag)
     except:
         #deletes contacts if validity not there.
-        print("Contact Verification failed...\nClearing Contacts for Saftey...")
+        print("Contact Verification failed...\nClearing Contacts for Saftey...\nExiting...\n")
         myFile = open("contacts.json","r+")
         myFile.truncate(0)
         myFile.write("{\n\t\"contacts\": [] \n}")
@@ -179,3 +188,5 @@ def decryptContacts (key):
     myFile = open("contacts.json","r+")
     myFile.truncate(0)
     myFile.write(data.decode())
+
+
