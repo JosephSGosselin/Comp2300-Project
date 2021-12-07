@@ -3,8 +3,7 @@ import multiprocessing
 from User import User
 from udpServices import *
 from utils import *
-import string
-
+from rsa import *
 
 def main():
 
@@ -27,6 +26,7 @@ def main():
         #this is required to check for contacts since this is the first func that comes
         #in contact with the password to used to encrypt.
         registerUser()
+        genRSAKeys()
     else:
         login()
 
@@ -47,9 +47,10 @@ def login():
 
 def runShell(password):
 
+    pubKey = getPubKey()
     #when user account is made, it is taking the info from json file.
     user = User(password)
-    sendProcess = multiprocessing.Process(target=sendUDP, args=(user.email,))
+    sendProcess = multiprocessing.Process(target=sendUDP, args=(user.email, pubKey,))
 
     #getProcess = multiprocessing.Process(target=getUDP, args=(user,)
     #starts thread. Dont need to join then since they are just receiving and sending udp packets
@@ -82,12 +83,12 @@ def runShell(password):
         elif (userResponse == "send"):
             print("sending")
         elif(userResponse == "list"):
-            print("Pinging Contacts...")
             getProcess = multiprocessing.Process(target=getUDP, args=(user,q))
             getProcess.start()
             #updates whole user object from getProcess
             user = q.get()
             user.generateContactList(password)
+            user.printOnlineList()
             getProcess.kill()
             print()
   
