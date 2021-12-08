@@ -61,6 +61,22 @@ class User:
         for item in self.onlineContacts:
             print("  * " + item["name"] + " <" + item["email"] + ">")
 
+    def isContactOnline (self, email: str):
+        #note that the user must use the list command first to query network
+        for contact in self.onlineContacts:
+            if email == contact["email"]:
+                return True
+        return False
+
+    def getContact (self, email: str):
+        for contact in self.onlineContacts:
+            if email == contact["email"]:
+                return contact
+        return None
+
+
+
+
     def __del__(self):
         pass
 

@@ -1,6 +1,6 @@
 import socket
 
-def recieveTCP():
+def getTCP():
     port = 8888
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -10,18 +10,26 @@ def recieveTCP():
     s.listen(5)
 
     try:
-        while 1:
-            newSocket, addr = s.accept()
+        while True:
+            client, addr = s.accept()
             print("Contact is sending a file. Accept (y/n)?")
-            while 1:
-                userInput = input()
-                if userInput == 'n':
-                    newSocket.send('n')
-                    s.close()
-            else:
-                pass
+            userInput = input()
+
+            if userInput == 'n':
+                client.send('n')
+                s.close()
+                break
+            elif userInput == 'y':
+                break
+
     finally:
         s.close()
 
-def sendTCP():
-    pass
+def sendTCP(listObj: dict):
+    print ("inside")
+    host = listObj["IP"]
+    port = 8888
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.connect((host,port))
+
+        
