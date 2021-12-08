@@ -1,5 +1,6 @@
 import socket
 import json
+import os
 def getTCP():
     port = 9998
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,12 +48,12 @@ def sendTCP(listObj: dict, sendInfo: dict ):
         s.recv(BUFSIZE)
 
         loc = str(sendInfo["fileLoc"])
-
         #if user forgets to add the last slash in the file path
-        if  not( loc.endswith('\\') or loc.endswith('\/') ):
-            loc += "\/"
+        if  not( loc.endswith('\\') or loc.endswith('/') ):
+            loc += "/"
         loc += sendInfo["fileName"]
-        with open(loc,"w+") as file:
+        abs_loc = os.path.expanduser(loc)
+        with open(abs_loc,"r+") as file:
             while True:
                 data = file.readline()
                 if not data:

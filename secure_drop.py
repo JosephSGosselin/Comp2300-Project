@@ -6,6 +6,7 @@ from utils import *
 from rsa import *
 from tcpServices import *
 from threading import *
+import os
 
 def main():
 
@@ -98,7 +99,11 @@ def runShell(password):
 
                     #doesnt check if file exists, if it doesn,t it creates an empty file and sends it
                     fileLoc = input("File Location?: ")
-                    sendTCP(user.getContact(email), {"email": user.email, "name": user.name, "fileName": fileName, "fileLoc": fileLoc})
+                    file = fileLoc+fileName
+                    if os.path.exists(file):
+                        sendTCP(user.getContact(email), {"email": user.email, "name": user.name, "fileName": fileName, "fileLoc": fileLoc})
+                    else:
+                        print("File doesn't exist")
 
 
             elif(userResponse == "list"):
