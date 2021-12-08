@@ -5,6 +5,7 @@ from udpServices import *
 from utils import *
 from rsa import *
 from tcpServices import *
+from threading import *
 
 def main():
 
@@ -48,6 +49,7 @@ def login():
 
 def runShell(password):
     try:
+        #loads the public key from json file
         pubKey = getPubKey()
         #when user account is made, it is taking the info from json file.
         user = User(password)
@@ -68,9 +70,9 @@ def runShell(password):
         #allows me to pass pickable objects to shared memory
         q = multiprocessing.Queue()
 
-
-    
         shouldRun = True
+
+        #key used for decrypting and encrypting contacts
         encryptionKey = generateEncrpytionHash(password, user.salt)
         print ("Welcome to SecureDrop")
         print("Type \"help\" For Commands.")
@@ -85,28 +87,33 @@ def runShell(password):
                 addContact()
                 encryptContacts(encryptionKey)
                 user.generateContactList(password)
+
             elif (userResponse == "send"):
-                print("Who would you like to send a file to? (email)")
-                email = input()
+                email = input("Email of contact: ")
                 if not (user.isContactOnline(email)):
                     print ("User is not online / user is not on the contact list. Try running the list command.")
                 else:
-                    sendTCP(user.getContact(email))
-                    print ("finshed")
+                    fileName = input("File Name?: ")
+                    #still need to encrypt file first put contacts pubKey
+
+                    #doesnt check if file exists, if it doesn,t it creates an empty file and sends it
+                    fileLoc = input("File Location?: ")
+                    sendTCP(user.getContact(email), {"email": user.email, "name": user.name, "fileName": fileName, "fileLoc": fileLoc})
+
 
             elif(userResponse == "list"):
+                #starts to get all pings from the other clients
                 getProcess = multiprocessing.Process(target=getUDP, args=(user,q))
                 getProcess.start()
                 #updates whole user object from getProcess
                 user = q.get()
+                #reloads contacts in user list() and then sees if online
                 user.generateContactList(password)
                 user.printOnlineList()
                 getProcess.kill()
                 print()
     
             elif(userResponse == "exit"):
-                del password
-                del encryptionKey
                 exit()
             else:
                 print("Unknown Command")
@@ -114,6 +121,8 @@ def runShell(password):
         tcpGet.kill()
         sendProcess.kill()
         getProcess.kill()
+        del password
+        del encryptionKey
     
 
 def listCommands():

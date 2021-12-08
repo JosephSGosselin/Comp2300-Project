@@ -39,6 +39,7 @@ class User:
                 #since udpPing messages hashes email, we must validate by rehashing emails from out contact list
                 hash.update(str(diction['email']).encode())
                 temp = hash.hexdigest()
+                #if the hashes match, add new section called IP and add to users that are online
                 if temp == ip["Email"]:
                     diction["IP"] = ip["IP"]
                     diction["pubKey"] = ip["pubKey"]
