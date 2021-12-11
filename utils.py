@@ -109,6 +109,7 @@ def addContact():
             shouldAppend = False
     if shouldAppend:
         Contacts.append(data)
+        print("Contact Added")
     # if Contacts == []:
     #     Contacts.append(data)
     #     print ("Contact added.\n")

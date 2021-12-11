@@ -3,13 +3,13 @@ import time
 from User import *
 import multiprocessing
 import json
+from Crypto.Hash import SHA256
 
 
 #can send packages to the same ip/port even if multiple people are also send to that port.
-def sendUDP (message: str):
+def sendUDP (message: str, pubKey: str):
     try:
         UDP_PORT = 9999
-        data = message.encode()
         sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -18,11 +18,16 @@ def sendUDP (message: str):
         #on windows it returns the external ip address (will keep since we might need to send where packet is coming from)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
+
+        sha = SHA256.new()
+        sha.update(message.encode())
+        emailHashed = str(sha.hexdigest())
+
         sending = True
         #if you have multi nic cards, windows will NOT broadcast to all of them. I had to Disable all but my wifi card.
         #on the linux virtual machines, it worked just fine.
         while (sending):
-            jsonDumped = json.dumps({"Email": message, "IP": s.getsockname()[0]}).encode("utf-8")
+            jsonDumped = json.dumps({"Email": emailHashed, "IP": s.getsockname()[0], "pubKey":pubKey }).encode("utf-8")
             sock.sendto(jsonDumped, ('<broadcast>',UDP_PORT))
             time.sleep(.1)
 
@@ -54,11 +59,14 @@ def getUDP (user: User, q: multiprocessing.Queue):
         count = 0
         while(listening and count < 25):
             data,address = sock.recvfrom(4096)
-            if str(address[0]).__eq__(str(so.getsockname()[0])) :
+            
+            #ignores packets from my ipaddress
+            if json.loads(data.decode())["IP"] == so.getsockname()[0]:
                 count = count + 1
+            #if user is already counted in the pinglist
             elif user.pingList.__contains__(json.loads(data.decode("utf-8"))):
                 count = count + 1
-
+            #else continue
             else:
                 try: 
                     #converts to json and stores into
