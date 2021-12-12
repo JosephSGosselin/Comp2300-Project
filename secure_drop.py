@@ -97,7 +97,7 @@ def runShell(password):
                     fileName = input("File Name?: ")
                     #still need to encrypt file first put contacts pubKey
 
-                    #doesnt check if file exists, if it doesn,t it creates an empty file and sends it
+                    #doesnt check if file exists, if it doesn't it creates an empty file and sends it
                     fileLoc = input("File Location?: ")
                     file = fileLoc+fileName
                     if os.path.exists(file):

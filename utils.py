@@ -21,9 +21,14 @@ def addUser():
 
     fullName = input ("\nEnter Full Name: ")
     emailData = input ("Enter Email Address: ")
-    passwordData =  getpass.getpass ("Enter Password: ")
-    passwordAgain = getpass.getpass ("Re-enter Password: ")
+    passwordData = ""
+    while len(passwordData) < 8:
+        passwordData =  getpass.getpass ("Enter Password: ")
+        if len(passwordData)<8:
+            print("Password needs to be at least 8 characters")
 
+
+    passwordAgain = getpass.getpass ("Re-enter Password: ")
     if passwordData != passwordAgain:
         print ("\nPasswords do not match.")
         print ("Exiting SecureDrop\n")

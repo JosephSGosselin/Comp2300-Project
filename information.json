@@ -1,0 +1,10 @@
+{
+    "user": [
+        {
+            "name": "eric",
+            "email": "e@gmail.com",
+            "password": "$2a$12$zG5MPeeRBlalCYqew/2QGOOSv7eVZNVpDSS34OTGcK4jrsm.BJ0Wm",
+            "salt": "FLk5KyoLsi7D8e6xZrTKIQkQGNzBerso"
+        }
+    ]
+}
